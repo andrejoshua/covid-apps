@@ -8,12 +8,12 @@ import javax.inject.Inject
 
 class NewsService @Inject constructor(private val api: ApiClient) {
 
-    suspend fun getAllNewsByCountry(country: String, page: Int = 1): NewsResponse {
+    suspend fun getAllNewsByCountry(country: String, page: Int = 1, pageSize: Int = 20): NewsResponse {
         return api.call("top-headlines", UrlType.News)
             .get {
                 addQueryParam("category", "health")
                 addQueryParam("page", page.toString())
-                addQueryParam("pageSize", "20")
+                addQueryParam("pageSize", pageSize.toString())
                 addQueryParam("country", country)
             }
     }

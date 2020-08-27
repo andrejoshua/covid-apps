@@ -3,16 +3,16 @@ package com.andre.apps.covid19updates.ui.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.FragmentNavigator
-import androidx.paging.DataSource
-import androidx.paging.LivePagedListBuilder
-import androidx.paging.PagedList
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.andre.apps.covid19updates.core.feature.news.model.NewsItem
 import com.andre.apps.covid19updates.core.feature.news.repo.NewsRemoteRepository
 import com.andre.apps.covid19updates.core.util.DispatcherProvider
 import com.andre.apps.covid19updates.nav.NavManager
 import kotlinx.coroutines.cancel
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class NewsViewModel @Inject constructor(
@@ -21,29 +21,10 @@ class NewsViewModel @Inject constructor(
     private val dispatcherProvider: DispatcherProvider
 ) : ViewModel() {
 
-    private var _news: LivePagedListBuilder<Int, NewsItem>
-    val news get() = _news.build()
-
-    init {
-        val config = PagedList.Config.Builder()
-            .setPageSize(20)
-            .setEnablePlaceholders(false)
-            .build()
-
-        val factory = object : DataSource.Factory<Int, NewsItem>() {
-            override fun create(): DataSource<Int, NewsItem> =
-                NewsDataSource(repository, viewModelScope, dispatcherProvider)
-        }
-
-        _news = LivePagedListBuilder(
-            factory,
-            config
-        ).setFetchExecutor(createFetchExecutor())
-    }
-
-    private fun createFetchExecutor(): ExecutorService {
-        return Executors.newSingleThreadExecutor()
-    }
+    // Hate this approach tho
+    val news: Flow<PagingData<NewsItem>> = Pager(PagingConfig(20)) {
+        NewsPagingSource(repository)
+    }.flow.cachedIn(viewModelScope)
 
     fun openWeb(
         url: String,

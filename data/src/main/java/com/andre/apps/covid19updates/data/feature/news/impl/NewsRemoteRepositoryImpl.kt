@@ -13,9 +13,9 @@ class NewsRemoteRepositoryImpl @Inject constructor(
     private val service: NewsService
 ) : BaseImpl(), NewsRemoteRepository {
 
-    override suspend fun getCurrentNews(page: Int): Result<News> =
+    override suspend fun getCurrentNews(page: Int, pageSize: Int): Result<News> =
         getResult(
-            { service.getAllNewsByCountry("us", page) },
+            { service.getAllNewsByCountry("us", page, pageSize) },
             { data ->
                 if (data.status != "ok")
                     throw Exception("Error")

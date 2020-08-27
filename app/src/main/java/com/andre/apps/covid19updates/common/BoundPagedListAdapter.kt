@@ -1,15 +1,14 @@
 package com.andre.apps.covid19updates.common
 
 import android.view.ViewGroup
-import androidx.paging.PagedListAdapter
-import androidx.recyclerview.widget.AsyncDifferConfig
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.viewbinding.ViewBinding
 
-abstract class BoundPagedListAdapter<T, V : ViewBinding>(
+abstract class BoundPagedListAdapter<T : Any, V : ViewBinding>(
     diffCallback: DiffUtil.ItemCallback<T>
-) : PagedListAdapter<T, BoundViewHolder<V>>(
-    AsyncDifferConfig.Builder<T>(diffCallback).build()
+) : PagingDataAdapter<T, BoundViewHolder<V>>(
+    diffCallback
 ) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BoundViewHolder<V> {

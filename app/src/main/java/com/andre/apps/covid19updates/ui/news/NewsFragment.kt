@@ -6,10 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.andre.apps.covid19updates.databinding.NewsFragmentBinding
 import com.andre.apps.covid19updates.di.Injectable
+import kotlinx.coroutines.flow.collectLatest
 import javax.inject.Inject
 
 class NewsFragment : Fragment(), Injectable {
@@ -46,11 +47,11 @@ class NewsFragment : Fragment(), Injectable {
         adapter = NewsAdapter(viewModel)
         binding.newsRecycler.adapter = adapter
 
-        viewModel.news.observe(viewLifecycleOwner, Observer { result ->
-            result.let {
-                adapter.submitList(it)
+        viewLifecycleOwner.lifecycleScope.launchWhenCreated {
+            viewModel.news.collectLatest {
+                adapter.submitData(viewLifecycleOwner.lifecycle, it)
             }
-        })
+        }
     }
 
     override fun onDestroyView() {

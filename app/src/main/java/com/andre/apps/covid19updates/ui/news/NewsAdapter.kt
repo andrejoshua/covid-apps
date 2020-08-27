@@ -22,7 +22,7 @@ class NewsAdapter(
         override fun areContentsTheSame(
             oldItem: NewsItem,
             newItem: NewsItem
-        ): Boolean = oldItem.headline == newItem.headline
+        ): Boolean = oldItem == newItem
     }
 ) {
 
