@@ -1,6 +1,7 @@
 package com.andre.apps.covid19updates.ui.news
 
 import androidx.paging.PagingSource
+import androidx.paging.PagingState
 import com.andre.apps.covid19updates.core.feature.Result
 import com.andre.apps.covid19updates.core.feature.news.model.NewsItem
 import com.andre.apps.covid19updates.core.feature.news.repo.NewsRemoteRepository
@@ -28,5 +29,9 @@ class NewsPagingSource(
                 LoadResult.Error(Exception("Should not go into this state"))
             }
         }
+    }
+
+    override fun getRefreshKey(state: PagingState<Int, NewsItem>): Int? {
+        return state.anchorPosition
     }
 }
